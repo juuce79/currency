@@ -1,4 +1,5 @@
 import unittest
+import inspect
 
 from convert_length import LengthConverter
 
@@ -9,8 +10,9 @@ class LengthConversionTests(unittest.TestCase):
         self.converter = LengthConverter()
 
     @staticmethod
-    def print_output(from_unit, to_unit, value, expected, actual):  # No change here
-        print(f"Output: {value} {from_unit} = {actual} {to_unit} (Expected: {expected})")
+    def print_output(from_unit, to_unit, value, expected, actual):
+        test_method_name = inspect.stack()[1][3]  # Get the calling test method's name
+        print(f"{test_method_name}: {value} {from_unit} = {actual} {to_unit} (Expected: {expected})")
 
     def test_centimeters_to_meters(self):
         result = self.converter.convert_length('cm', 'm', 100)
@@ -82,6 +84,12 @@ class LengthConversionTests(unittest.TestCase):
         self.assertAlmostEqual(result, 5.556, places=3)
         self.print_output('nmi', 'km', 3, 5.556, result)
 
+    def test_same_unit_conversion(self):
+        """Tests that conversion between the same units returns the original value"""
+        result = self.converter.convert_length('cm', 'cm', 100)
+        self.assertEqual(result, 100)  # Expect the original value unchanged
+        self.print_output('cm', 'cm', 100, 100, result)
+
     def test_zero_conversion(self):
         result = self.converter.convert_length('cm', 'm', 0)
         self.assertAlmostEqual(result, 0)
@@ -90,14 +98,17 @@ class LengthConversionTests(unittest.TestCase):
     def test_negative_input(self):
         with self.assertRaises(ValueError):  # Expect a ValueError
             self.converter.convert_length('ft', 'm', -10)
+            print(f"{ValueError} is not a number")
 
     def test_invalid_units(self):
         with self.assertRaises(KeyError):
             self.converter.convert_length('xyz', 'km', 5)
+            print(f"{KeyError} is not a valid unit")
 
     def test_non_numeric_input(self):
         with self.assertRaises(TypeError):
             self.converter.convert_length('cm', 'm', 'hello')
+            print(f"{TypeError} is not a valid value")
 
 
 if __name__ == '__main__':

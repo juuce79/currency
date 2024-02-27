@@ -15,6 +15,15 @@ class LengthConverter:
         }
 
     def convert_length(self, from_unit, to_unit, value):
+        if value < 0:  # Check for negative values
+            raise ValueError("Length cannot be negative")
+        if from_unit not in self.conversion_factors:  # Check for invalid from_unit
+            raise KeyError(f"Invalid unit: {from_unit}")
+        if to_unit not in self.conversion_factors:  # Check for invalid to_unit
+            raise KeyError(f"Invalid unit: {to_unit}")
+        if not isinstance(value, (int, float)):  # Check if 'value' is numeric
+            raise TypeError("Length value must be numeric")
+
         if from_unit == self.base_unit:
             value = value / self.conversion_factors[to_unit]  # Convert to base unit from target
         elif to_unit == self.base_unit:
