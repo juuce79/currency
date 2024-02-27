@@ -1,37 +1,39 @@
 import argparse
+import sys
 
 from convert_currency import CurrencyConverter
 from convert_length import LengthConverter
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Choose conversion type and parameters.")
-    parser.add_argument("conversion_type", choices=['1', '2'], help="1 for currency, 2 for length")
-    parser.add_argument("--from", dest='from_unit',  help="Unit/currency to convert from")
-    parser.add_argument("--to", dest='to_unit',  help="Unit/currency to convert to")
-    parser.add_argument("--amount", type=float,  help="Amount to convert")
+    if len(sys.argv) > 1:
+        parser = argparse.ArgumentParser(description="Choose conversion type and parameters.")
+        parser.add_argument("conversion_type", choices=['1', '2'], help="1 for currency, 2 for length")
+        parser.add_argument("--from", dest='from_unit',  help="Unit/currency to convert from")
+        parser.add_argument("--to", dest='to_unit',  help="Unit/currency to convert to")
+        parser.add_argument("--amount", type=float,  help="Amount to convert")
 
-    args = parser.parse_args()
+        args = parser.parse_args()
 
-    # Process command-line arguments if provided
-    if args.conversion_type is not None:
-        if args.conversion_type == '1':
-            currency_converter = CurrencyConverter()
-            result = currency_converter.convert_currency(args.from_unit, args.to_unit, args.amount)
-            if result:
-                print(f"{args.amount} {args.from_unit} is equal to {result} {args.to_unit}")
-            else:
-                print("Conversion failed. Check if currencies are valid.")
+        # Process command-line arguments if provided
+        if args.conversion_type:
+            if args.conversion_type == '1':
+                currency_converter = CurrencyConverter()
+                result = currency_converter.convert_currency(args.from_unit, args.to_unit, args.amount)
+                if result:
+                    print(f"{args.amount} {args.from_unit} is equal to {result} {args.to_unit}")
+                else:
+                    print("Conversion failed. Check if currencies are valid.")
 
-        elif args.conversion_type == '2':
-            length_converter = LengthConverter()
-            result = length_converter.convert_length(args.from_unit, args.to_unit, args.amount)
-            if result:
-                rounded_result = round_to_nearest_nonzero(result)
-                rounded_value = round_to_nearest_nonzero(args.amount)
-                print(f"{rounded_value} {args.from_unit} is equal to {rounded_result} {args.to_unit}")
-            else:
-                print("Conversion failed. Check if units are valid.")
+            elif args.conversion_type == '2':
+                length_converter = LengthConverter()
+                result = length_converter.convert_length(args.from_unit, args.to_unit, args.amount)
+                if result:
+                    rounded_result = round_to_nearest_nonzero(result)
+                    rounded_value = round_to_nearest_nonzero(args.amount)
+                    print(f"{rounded_value} {args.from_unit} is equal to {rounded_result} {args.to_unit}")
+                else:
+                    print("Conversion failed. Check if units are valid.")
 
     else:  # Fallback to interactive mode if no command-line arguments
         while True:
